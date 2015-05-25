@@ -1,2 +1,2 @@
 # ds-demo-simple-app-react
-A simple react demo integrating with deepstream
+A React basic example using deepstream
