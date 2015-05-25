@@ -102,14 +102,9 @@ var AddUser = React.createClass({
 var UserDetails = React.createClass({
   getInitialState: function() {
     this.record = ds.record.getAnonymousRecord();
-    return {
-    }
+    return {}
   },
   componentDidMount: function() {
-    this.record.subscribe(function(data) {
-      this.setState(data);
-    }.bind(this));
-
     emitter.addListener('user-selected', function( recordName ) {
       this.record.setName(recordName);
     }.bind(this));
