@@ -62,6 +62,7 @@ var User = React.createClass({
           onClick={this.selectUser}>
         <em>
           <span>{this.state.firstname}</span>
+          &nbsp;
           <span>{this.state.lastname}</span>
         </em>
         <span>{this.state.title}</span>
@@ -115,19 +116,19 @@ var UserDetails = React.createClass({
         <fieldset>
   				<legend>General data</legend>
   				<ul className="fields">
-            <Line record={this.record} field='firstname' label='Firstname'/>
-            <Line record={this.record} field='lastname' label='Lastname'/>
-            <Line record={this.record} field='title' label='Title'/>
+            <UserListEntry record={this.record} field='firstname' label='Firstname'/>
+            <UserListEntry record={this.record} field='lastname' label='Lastname'/>
+            <UserListEntry record={this.record} field='title' label='Title'/>
   				</ul>
   			</fieldset>
 
   			<fieldset>
   				<legend>Address</legend>
 				    <ul className="fields">
-              <Line record={this.record} field='street' label='Street'/>
-              <Line record={this.record} field='number' label='Nr'/>
-              <Line record={this.record} field='postcode' label='Post Code'/>
-              <Line record={this.record} field='city' label='City'/>
+              <UserListEntry record={this.record} field='street' label='Street'/>
+              <UserListEntry record={this.record} field='number' label='Nr'/>
+              <UserListEntry record={this.record} field='postcode' label='Post Code'/>
+              <UserListEntry record={this.record} field='city' label='City'/>
             </ul>
   			</fieldset>
       </div>
@@ -135,7 +136,7 @@ var UserDetails = React.createClass({
   }
 });
 
-var Line = React.createClass({
+var UserListEntry = React.createClass({
   getInitialState: function() {
     return {
       value: null
