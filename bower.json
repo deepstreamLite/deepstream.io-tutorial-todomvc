@@ -1,9 +1,10 @@
 {
   "name": "ds-simple-input",
   "version": "0.0.0",
-  "homepage": "https://github.com/WolframHempel/experiments",
+  "homepage": "https://github.com/hoxton-one/ds-demo-simple-app-react",
   "authors": [
-    "Wolfram Hempel <hempel.wolfram@gmail.com>"
+    "Wolfram Hempel <hempel.wolfram@gmail.com>",
+    "Yasser Fadl <yasser.fadl@gmail.com>"
   ],
   "description": "A sample app using react",
   "license": "MIT",
