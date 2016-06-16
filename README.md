@@ -2,7 +2,7 @@ ds-demo-simple-app-react
 =============================
 A simple demo app using deepstream.io and react
 
-You can view a description of all the steps taken [here](http://deepstream.io/tutorials/simple-app-using-react.html)
+See more React examples [here](https://deepstream.io/tutorials/deepstream-react.html)
 
 Install
 -----------------------------
