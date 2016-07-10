@@ -25,8 +25,8 @@ var UsersList = React.createClass({
   },
   render: function() {
     var users = [];
-    for( var i=0; i < this.state.users.length; i++ ) {
-      users.push(<User recordName={this.state.users[i]}/>);
+    for( var i = 0; i < this.state.users.length; i++ ) {
+      users.push( <User recordName={this.state.users[i]}/> );
     }
     return (
       <div>
