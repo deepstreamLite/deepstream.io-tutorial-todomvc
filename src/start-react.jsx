@@ -4,79 +4,82 @@ ds.login({ username: 'ds-simple-input-' + ds.getUid() });
 var emitter = new EventEmitter();
 
 
-
-
-var UserDetails = React.createClass({
-  getInitialState: function() {
+class UserDetails extends React.Component{
+  constructor(props) {
+    super(props);
     var that=this;
     var todosList = ds.record.getList('todos');
-    todosList.whenReady(()=> {
-      this.todosList = todosList;
-      this.todos = todosList.getEntries();
-      var list = [];
-      var obj = {};
-      for (var i=0;i<this.todos.length;i++) {
-        obj.name=this.todos[i];
-        var rec = ds.record.getRecord(this.todos[i]);
-        rec.whenReady((rec) => {
-          var that=this;
-          obj.title = rec.get('title');
-          obj.isDone = rec.get('isDone');
-          list.push(obj);
-        })
-      }
-this.list = list;
-console.log(list)
-    })
+    todosList.setEntries([]);
 
-    return {newTodo: ''
-            }
-  },
-  componentDidMount: function() {
+
+    this.state = {
+      todos:[],
+      todosList:todosList,
+      newTodo:'',
+    }
+
+    this.handleKeyPress = this.handleKeyPress.bind(this);
+    this.handleChange = this.handleChange.bind(this);
+    this.componentDidMount = this.componentDidMount.bind(this);
+  }
+
+  componentDidMount() {
+
     emitter.addListener('user-selected', function( recordName ) {
       this.record.setName(recordName);
     }.bind(this));
-  },
-  render: function() {
-    console.log(this);
-
+  }
+  render() {
+    var todos = this.state.todos.map(function(item) {
+      return (
+          <div className="todoBox">
+            <input className="checkbox" type="checkbox" name="check"/>
+            <h4 className="todoText">{item.title}</h4>
+          </div>
+      )
+    })
     return (
       <div>
-        <h3>What is there to do</h3>
-        <textArea value={this.state.newTodo} onKeyPress={this.handleKeyPress} onChange={this.handleChange}></textArea>
-
+        <h4>What is there to do</h4>
+        <textArea className="todoInput" value={this.state.newTodo} onKeyPress={this.handleKeyPress} onChange={this.handleChange}></textArea>
+        <div className="todos">
+          {todos}
+        </div>
       </div>
     );
-  },
-  handleKeyPress: function(event) {
-    var that=this;
-    var todos = that.todos;
-    var todosList = that.todosList;
+  }
+  handleKeyPress(event) {
+    var obj={};
+    var todosList=this.state.todosList;
+    var todos = this.state.todos;
     if(event.key == 'Enter') {
       console.log('enter pressed');
-      console.log(that.state.newTodo);
+      console.log(this.state.newTodo);
+      this.setState({
+        newTodo:''
+      })
       var id = 'todo/' + ds.getUid();
       ds.record.getRecord( id ).set({
-        title: that.state.newTodo,
+        title: this.state.newTodo,
         isDone: false
       });
-      console.log(ds.record.getRecord(id))
       todosList.addEntry(id);
-      console.log(todosList._record._$data);
+      var rec = ds.record.getRecord(id);
+      rec.whenReady(()=> {
+        obj.title = rec.get('title');
+        obj.isDone = rec.get('isDone');
+        todos.push(obj)
+        this.setState({
+          todos:todos
+        })
+        console.log(this.state.todos)
+      })
     }
-  },
-  handleChange: function(event) {
+  }
+  handleChange(event) {
     this.setState({newTodo:event.target.value})
   }
-
-});
-
-
-
-
-
-
-
+};
 
 
 React.render(
