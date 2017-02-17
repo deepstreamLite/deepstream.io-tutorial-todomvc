@@ -8,15 +8,35 @@ class UserDetails extends React.Component{
   constructor(props) {
     super(props);
     var that=this;
+    var todos=[];
+
     var todosList = ds.record.getList('todos');
-    todosList.setEntries([]);
-
-
     this.state = {
       todos:[],
       todosList:todosList,
-      newTodo:'',
+      newTodo:''
     }
+    todosList.whenReady(()=> {
+      var entries = todosList.getEntries();
+
+      entries.forEach(function(item) {
+        var obj = {};
+        var rec = ds.record.getRecord(item);
+        obj.id=item;
+        rec.whenReady(()=> {
+          obj.title = rec.get('title');
+          obj.isDone = rec.get('isDone');
+          todos.unshift(obj);
+        })
+
+      })
+
+      this.setState({
+        todos:todos
+      })
+      console.log(this.state.todos)
+
+    })
 
     this.handleKeyPress = this.handleKeyPress.bind(this);
     this.handleChange = this.handleChange.bind(this);
@@ -29,32 +49,38 @@ class UserDetails extends React.Component{
       this.record.setName(recordName);
     }.bind(this));
   }
+
   render() {
+    console.log('render');
+    console.log(this.state.todos)
+
     var todos = this.state.todos.map(function(item) {
       return (
-          <div className="todoBox">
-            <input className="checkbox" type="checkbox" name="check"/>
-            <h4 className="todoText">{item.title}</h4>
-          </div>
+        <div className="todoBox">
+          <input className="checkbox" type="checkbox" name="check"/>
+          <h4 className="todoText">{item.title}</h4>
+        </div>
       )
     })
     return (
       <div>
         <h4>What is there to do</h4>
-        <textArea className="todoInput" value={this.state.newTodo} onKeyPress={this.handleKeyPress} onChange={this.handleChange}></textArea>
+        <textArea className="todoInput" value={this.state.newTodo}
+          onKeyPress={this.handleKeyPress} onChange={this.handleChange}></textArea>
         <div className="todos">
           {todos}
         </div>
       </div>
     );
   }
-  handleKeyPress(event) {
+  handleKeyPress(e) {
     var obj={};
     var todosList=this.state.todosList;
     var todos = this.state.todos;
-    if(event.key == 'Enter') {
-      console.log('enter pressed');
-      console.log(this.state.newTodo);
+    if(e.key == 'Enter') {
+      if(this.state.newTodo.length>0) {
+console.log('inded bigger')
+
       this.setState({
         newTodo:''
       })
@@ -63,21 +89,22 @@ class UserDetails extends React.Component{
         title: this.state.newTodo,
         isDone: false
       });
-      todosList.addEntry(id);
+      ds.record.getList('todos').addEntry(id);
       var rec = ds.record.getRecord(id);
       rec.whenReady(()=> {
+        obj.id = id;
         obj.title = rec.get('title');
         obj.isDone = rec.get('isDone');
-        todos.push(obj)
+        todos.unshift(obj)
         this.setState({
           todos:todos
         })
-        console.log(this.state.todos)
       })
     }
+    }
   }
-  handleChange(event) {
-    this.setState({newTodo:event.target.value})
+  handleChange(e) {
+    this.setState({newTodo:e.target.value})
   }
 };
 
