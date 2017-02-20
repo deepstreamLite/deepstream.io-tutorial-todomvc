@@ -8,59 +8,46 @@ class ToDo extends React.Component{
   constructor(props) {
     super(props);
     var that=this;
-    var todos=[];
 
     this.state = {
       todos:[],
       todosList:[],
       newTodo:''
     }
+    var todosList = ds.record.getList('todos');
+
+    var todos = this.state.todos;
+    todosList.whenReady(()=> {
+      var entries = todosList.getEntries();
+      entries.forEach(function(item) {
+        var obj = {};
+        var rec = ds.record.getRecord(item);
+        obj.id=item;
+        rec.whenReady(()=> {
+          obj.title = rec.get('title');
+          obj.isDone = rec.get('isDone');
+          todos.unshift(obj);
+          that.setState({
+            todos:todos
+          })
+        })
+      })
+    })
 
     this.handleKeyPress = this.handleKeyPress.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.componentDidMount = this.componentDidMount.bind(this);
   }
 
+
+
   componentDidMount() {
-    var todos=[];
-
-    var todosList = ds.record.getList('todos');
-
-    todosList.whenReady(()=> {
-      var entries = todosList.getEntries();
-
-      entries.forEach(function(item) {
-        var obj = {};
-        var rec = ds.record.getRecord(item);
-        obj.id=item;
-        rec.whenReady(()=> {
-          console.log( 'got data');
-          obj.title = rec.get('title');
-          obj.isDone = rec.get('isDone');
-          todos.unshift(obj);
-        })
-
-      })
-
-      this.setState({
-        todos:todos,
-        todosList:todosList
-      })
-      console.log('here')
-
-    })
-
-
     emitter.addListener('user-selected', function( recordName ) {
       this.record.setName(recordName);
     }.bind(this));
   }
 
   render() {
-    var { todos } = this.state;
-    console.log('render');
-    console.log(this.state.todos)
-
     var todos = this.state.todos.map(function(item) {
       return (
         <div className="todoBox">
@@ -69,6 +56,7 @@ class ToDo extends React.Component{
         </div>
       )
     })
+
     return (
       <div>
         <h4>What is there to do</h4>
@@ -86,28 +74,27 @@ class ToDo extends React.Component{
     var todos = this.state.todos;
     if(e.key == 'Enter') {
       if(this.state.newTodo.length>0) {
-console.log('inded bigger')
 
-      this.setState({
-        newTodo:''
-      })
-      var id = 'todo/' + ds.getUid();
-      ds.record.getRecord( id ).set({
-        title: this.state.newTodo,
-        isDone: false
-      });
-      ds.record.getList('todos').addEntry(id);
-      var rec = ds.record.getRecord(id);
-      rec.whenReady(()=> {
-        obj.id = id;
-        obj.title = rec.get('title');
-        obj.isDone = rec.get('isDone');
-        todos.unshift(obj)
         this.setState({
-          todos:todos
+          newTodo:''
         })
-      })
-    }
+        var id = 'todo/' + ds.getUid();
+        ds.record.getRecord( id ).set({
+          title: this.state.newTodo,
+          isDone: false
+        });
+        ds.record.getList('todos').addEntry(id);
+        var rec = ds.record.getRecord(id);
+        rec.whenReady(()=> {
+          obj.id = id;
+          obj.title = rec.get('title');
+          obj.isDone = rec.get('isDone');
+          todos.unshift(obj)
+          this.setState({
+            todos:todos
+          })
+        })
+      }
     }
   }
   handleChange(e) {
