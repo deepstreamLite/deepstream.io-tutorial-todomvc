@@ -9,10 +9,12 @@ class ToDo extends React.Component{
     this.state = {
       todos:[],
       newTodo:''
-    }
+        }
     this.handleKeyPress = this.handleKeyPress.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.componentDidMount = this.componentDidMount.bind(this);
+    this.handleInputChange = this.handleInputChange.bind(this);
+
   }
 
   componentDidMount() {
@@ -71,10 +73,14 @@ class ToDo extends React.Component{
     var todos = this.state.todos.map(function(item) {
       return (
         <div className="todoBox">
-          <input className="checkbox" type="checkbox" name="check"/>
-          <h4 className="todoText">{item.title}</h4>
-            <button id={item.id}className="destroy" onClick={that.removeTodo} />
-
+          <input id={'inp/' + item.id}
+            className="checkbox"
+            type="checkbox"
+            name="done"
+            checked={that.state.done}
+            onChange={that.handleInputChange}/>
+          <h4 id={item.id} className="todoText">{item.title}</h4>
+            <button id={item.id} className="destroy" onClick={that.removeTodo} />
         </div>
       )
     })
@@ -91,6 +97,11 @@ class ToDo extends React.Component{
       </div>
     );
   }
+
+  handleInputChange(event) {
+  console.log(event.target.checked)
+  }
+
   removeTodo(e) {
     var id=e.target.id;
     emitter.emit('delete-todo', id);
@@ -116,6 +127,7 @@ class ToDo extends React.Component{
     this.setState({newTodo:e.target.value})
   }
 };
+
 
 
 React.render(
