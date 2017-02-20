@@ -4,18 +4,28 @@ ds.login({ username: 'ds-simple-input-' + ds.getUid() });
 var emitter = new EventEmitter();
 
 
-class UserDetails extends React.Component{
+class ToDo extends React.Component{
   constructor(props) {
     super(props);
     var that=this;
     var todos=[];
 
-    var todosList = ds.record.getList('todos');
     this.state = {
       todos:[],
-      todosList:todosList,
+      todosList:[],
       newTodo:''
     }
+
+    this.handleKeyPress = this.handleKeyPress.bind(this);
+    this.handleChange = this.handleChange.bind(this);
+    this.componentDidMount = this.componentDidMount.bind(this);
+  }
+
+  componentDidMount() {
+    var todos=[];
+
+    var todosList = ds.record.getList('todos');
+
     todosList.whenReady(()=> {
       var entries = todosList.getEntries();
 
@@ -24,6 +34,7 @@ class UserDetails extends React.Component{
         var rec = ds.record.getRecord(item);
         obj.id=item;
         rec.whenReady(()=> {
+          console.log( 'got data');
           obj.title = rec.get('title');
           obj.isDone = rec.get('isDone');
           todos.unshift(obj);
@@ -32,18 +43,13 @@ class UserDetails extends React.Component{
       })
 
       this.setState({
-        todos:todos
+        todos:todos,
+        todosList:todosList
       })
-      console.log(this.state.todos)
+      console.log('here')
 
     })
 
-    this.handleKeyPress = this.handleKeyPress.bind(this);
-    this.handleChange = this.handleChange.bind(this);
-    this.componentDidMount = this.componentDidMount.bind(this);
-  }
-
-  componentDidMount() {
 
     emitter.addListener('user-selected', function( recordName ) {
       this.record.setName(recordName);
@@ -51,6 +57,7 @@ class UserDetails extends React.Component{
   }
 
   render() {
+    var { todos } = this.state;
     console.log('render');
     console.log(this.state.todos)
 
@@ -112,7 +119,7 @@ console.log('inded bigger')
 React.render(
   <div id="wrapper">
     <div className="col right">
-      <UserDetails />
+      <ToDo />
     </div>
   </div>,
   document.body
