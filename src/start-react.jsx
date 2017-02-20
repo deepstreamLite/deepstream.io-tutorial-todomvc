@@ -3,18 +3,22 @@ ds.login({ username: 'ds-simple-input-' + ds.getUid() });
 
 var emitter = new EventEmitter();
 
-
 class ToDo extends React.Component{
   constructor(props) {
     super(props);
-    var that=this;
-
     this.state = {
       todos:[],
       newTodo:''
     }
-    var list = ds.record.getList('todos');
-    var todos = [];
+    this.handleKeyPress = this.handleKeyPress.bind(this);
+    this.handleChange = this.handleChange.bind(this);
+    this.componentDidMount = this.componentDidMount.bind(this);
+  }
+
+  componentDidMount() {
+    var todos = this.state.todos;
+    var that=this;
+    var list = ds.record.getList( 'todos' );
     list.whenReady(()=> {
       var entries = list.getEntries();
       entries.forEach(function(item) {
@@ -32,24 +36,24 @@ class ToDo extends React.Component{
       })
     })
 
-    this.handleKeyPress = this.handleKeyPress.bind(this);
-    this.handleChange = this.handleChange.bind(this);
-    this.componentDidMount = this.componentDidMount.bind(this);
-  }
-
-
-
-  componentDidMount() {
-    var that=this;
-    var list = ds.record.getList( 'todos' );
-
     emitter.addListener('todo-added', function( recordName ) {
+      var todos=that.state.todos;
+      var obj={}
+      var rec = ds.record.getRecord(recordName);
+      rec.whenReady(()=> {
+        obj.id = recordName;
+        obj.title = rec.get('title');
+        obj.isDone = rec.get('isDone');
+        todos.push(obj)
+        that.setState({
+          todos:todos
+        })
+      })
       list.addEntry( recordName );
     });
 
     emitter.addListener('delete-todo', function( recordName ) {
       var todos=that.state.todos;
-      console.log('removing')
       todos.forEach(function(item,i) {
         if(item.id==recordName) {
           todos.splice(i,1);
@@ -58,14 +62,8 @@ class ToDo extends React.Component{
           })
         }
       })
-
       list.removeEntry( recordName );
-
     });
-
-    emitter.addListener('user-selected', function( recordName ) {
-      this.record.setName(recordName);
-    }.bind(this));
   }
 
   render() {
@@ -94,10 +92,8 @@ class ToDo extends React.Component{
     );
   }
   removeTodo(e) {
-    console.log(e.target.id)
     var id=e.target.id;
     emitter.emit('delete-todo', id);
-
   }
   handleKeyPress(e) {
     var obj={};
@@ -113,16 +109,6 @@ class ToDo extends React.Component{
           isDone: false
         });
         emitter.emit('todo-added', id);
-        var rec = ds.record.getRecord(id);
-        rec.whenReady(()=> {
-          obj.id = id;
-          obj.title = rec.get('title');
-          obj.isDone = rec.get('isDone');
-          todos.push(obj)
-          this.setState({
-            todos:todos
-          })
-        })
       }
     }
   }
