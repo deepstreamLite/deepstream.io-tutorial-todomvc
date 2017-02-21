@@ -34,6 +34,7 @@ class ToDo extends React.Component{
       <div>
         <header className="header">
         						<h1 id="headline">todos</h1>
+
         						<input
         							className="new-todo"
         							placeholder="What needs to be done?"
@@ -46,6 +47,7 @@ class ToDo extends React.Component{
         <div className="todos">
           {todos}
         </div>
+
       </div>
     );
   }
