@@ -32,9 +32,17 @@ class ToDo extends React.Component{
 
     return (
       <div>
-        <h4>What is there to do</h4>
-        <input type="text" className="todoInput" value={this.state.newTodo}
-           onChange={this.handleChange} onKeyPress={this.handleKeyPress}/>
+        <header className="header">
+        						<h1 id="headline">todos</h1>
+        						<input
+        							className="new-todo"
+        							placeholder="What needs to be done?"
+        							value={this.state.newTodo}
+                      onKeyPress={this.handleKeyPress}
+        							onChange={this.handleChange}
+        							autoFocus={true}
+        						/>
+        					</header>
         <div className="todos">
           {todos}
         </div>
@@ -69,6 +77,8 @@ class TodoItem extends React.Component{
     this.record = ds.record.getRecord(this.props.recordName);
     this.record.subscribe(this.setState.bind(this), true);
     this.removeTodo = this._removeTodo.bind( this );
+    this.check = this._check.bind( this );
+
     this.state = {
       title:'',
       isDone:false
@@ -77,26 +87,45 @@ class TodoItem extends React.Component{
 
   render () {
     return (
-      <div className="todoBox">
-        <input id={'inp/' + this.props.recordName}
-          className="checkbox"
+      <li className="todoBox">
+        <input className="toggle"
+          name="done"
           type="checkbox"
-          name="done"/>
-        <h4 id={this.props.recordName} className="todoText">{this.state.title}</h4>
+          checked={this.state.done}
+          onChange={this.check}/>
+        <label id={this.props.recordName}
+          className={this.state.isDone ? 'doneTodo' : 'todoText'}>{this.state.title}</label>
         <button className="destroy" onClick={this.removeTodo} />
-      </div>
+      </li>
     )
   }
+
 
   _removeTodo() {
     this.props.list.removeEntry( this.record.name );
     this.record.delete();
   }
+
+  _check (event) {
+    if(event.target.checked==true) {
+      this.setState({
+        isDone:true
+      })
+    }
+
+    if(event.target.checked==false) {
+      this.setState({
+        isDone:false
+      })
+    }
+  }
+
 }
+
 
 React.render(
   <div id="wrapper">
-    <div className="col right">
+    <div>
       <ToDo />
     </div>
   </div>,
