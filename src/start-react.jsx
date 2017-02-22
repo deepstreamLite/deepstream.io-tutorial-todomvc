@@ -4,52 +4,70 @@ ds.login({ username: 'ds-simple-input-' + ds.getUid() });
 var emitter = new EventEmitter();
 
 
+
 class ToDo extends React.Component{
   constructor(props) {
     super(props);
-    this.state = {
-      todos:[],
-      newTodo:''
-    }
     this.list = ds.record.getList( 'todos' );
     this.list.subscribe(this._setEntries.bind( this ) );
-
+    this.state = {
+      todos:[],
+      newTodo:'',
+      toShow:'all'
+    }
     this.handleKeyPress = this._handleKeyPress.bind( this );
     this.handleChange = this._handleChange.bind( this );
+    this.showAll = this._showAll.bind( this );
+    this.showActive = this._showActive.bind( this );
+    this.showCompleted = this._showCompleted.bind( this );
+    this.clearCompleted = this._clearCompleted.bind( this );
+
   }
 
   _setEntries( entries ) {
-    this.setState({todos: entries});
+    this.setState({
+      todos: entries
+    });
   }
 
   render() {
+    var todos = this.state.todos;
+    console.log(todos)
     var list = this.list;
+    var toShow = this.state.toShow;
     var todos = this.state.todos.map(function(recordName) {
       return (
-        <TodoItem recordName={recordName} list={list} key={recordName}/>
+        <TodoItem recordName={recordName} list={list} key={recordName} toShow={toShow}/>
       )
     })
 
     return (
       <div>
         <header className="header">
-        						<h1 id="headline">todos</h1>
-
-        						<input
-        							className="new-todo"
-        							placeholder="What needs to be done?"
-        							value={this.state.newTodo}
-                      onKeyPress={this.handleKeyPress}
-        							onChange={this.handleChange}
-        							autoFocus={true}
-        						/>
-        					</header>
+          <h1 id="headline">todos</h1>
+          <input
+            className="new-todo"
+            placeholder="What needs to be done?"
+            value={this.state.newTodo}
+            onKeyPress={this.handleKeyPress}
+            onChange={this.handleChange}
+            autoFocus={true}
+            />
+        </header>
         <div className="todos">
           {todos}
         </div>
+        <div className="footer">
+          <h4 className="itemsLeft">items left</h4>
 
+          <button className="footerButton" onClick={this.showAll}>All</button>
+          <button className="footerButton" onClick={this.showActive}>Active</button>
+          <button className="footerButton" onClick={this.showCompleted}>Completed</button>
+          <button className="footerButton" onClick={this.clearCompleted}>Clear Completed</button>
+        </div>
       </div>
-    );
+    )
+
   }
 
   _handleKeyPress(e) {
@@ -71,7 +89,45 @@ class ToDo extends React.Component{
   _handleChange(e) {
     this.setState({newTodo:e.target.value});
   }
+
+  _showAll() {
+    this.setState({
+      toShow:'all'
+    })
+  }
+
+  _showActive () {
+    this.setState({
+      toShow:'active'
+    })
+  }
+
+  _showCompleted() {
+    this.setState({
+      toShow:'completed'
+    })
+  }
+
+  _clearCompleted() {
+    var list = this.list;
+    var todos = this.state.todos;
+    todos.forEach(function(recordName) {
+      var rec = ds.record.getRecord(recordName);
+      rec.whenReady(()=>{
+        if(rec.get('isDone')==true) {
+          list.removeEntry(recordName);
+          rec.delete();
+        }
+      })
+    })
+  }
 };
+
+
+
+
+
+
 
 class TodoItem extends React.Component{
   constructor(props) {
@@ -88,18 +144,36 @@ class TodoItem extends React.Component{
   }
 
   render () {
+    var toShow = this.props.toShow;
+    var isDone = this.state.isDone;
+    var check = this.check;
+    var recordName = this.props.recordName;
+    var title = this.state.title;
+    var removeTodo = this.removeTodo;
+    function whatToShow() {
+      if(toShow=='all' || (isDone==false&&toShow=='active') ||
+      (isDone==true&&toShow=='completed') ) {
+        return (
+          <li className="todoBox">
+            <input className="toggle"
+              name="done"
+              type="checkbox"
+              checked={isDone}
+              onChange={check}/>
+            <label id={recordName}
+              className={isDone ? 'doneTodo' : 'todoText'}>{title}</label>
+            <button className="destroy" onClick={removeTodo} />
+          </li>
+        )
+      }
+    }
+
     return (
-      <li className="todoBox">
-        <input className="toggle"
-          name="done"
-          type="checkbox"
-          checked={this.state.done}
-          onChange={this.check}/>
-        <label id={this.props.recordName}
-          className={this.state.isDone ? 'doneTodo' : 'todoText'}>{this.state.title}</label>
-        <button className="destroy" onClick={this.removeTodo} />
-      </li>
+      <div>
+        {whatToShow()}
+      </div>
     )
+
   }
 
 
@@ -110,19 +184,24 @@ class TodoItem extends React.Component{
 
   _check (event) {
     if(event.target.checked==true) {
+      this.record.set('isDone', true);
       this.setState({
         isDone:true
       })
     }
 
     if(event.target.checked==false) {
+      this.record.set('isDone', false);
       this.setState({
         isDone:false
       })
     }
   }
-
 }
+
+
+
+
 
 
 React.render(
