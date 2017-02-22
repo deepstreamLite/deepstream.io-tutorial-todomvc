@@ -72,6 +72,42 @@ input:focus {outline:0;}
     font-smoothing: antialiased;
 
 }
+
+.editInput {
+	left: 100px;
+}
+
+li .edit {
+	display: block;
+	background-color: white;
+	width: 500px;
+	height:80px;
+	padding: 13px 17px 12px 17px;
+	margin: -25px 0 0 50px;
+	border: 1px solid #383838;
+	z-index: 10;
+}
+
+li .noEdit {
+	display: none;
+}
+
+li.editing {
+	border-bottom: none;
+	padding: 0;
+}
+
+li.editing .edit {
+	display: block;
+	width: 506px;
+	padding: 13px 17px 12px 17px;
+	margin: 0 0 0 43px;
+}
+
+li.editing .view {
+	display: none;
+}
+
 input {
     -webkit-appearance: textfield;
     background-color: white;
