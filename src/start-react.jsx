@@ -14,7 +14,8 @@ class ToDo extends React.Component{
       todos:[],
       newTodo:'',
       toShow:'all',
-      counter:0
+      counter:0,
+      trial:'trial'
     }
     this.handleKeyPress = this._handleKeyPress.bind( this );
     this.handleChange = this._handleChange.bind( this );
@@ -22,7 +23,10 @@ class ToDo extends React.Component{
     this.showActive = this._showActive.bind( this );
     this.showCompleted = this._showCompleted.bind( this );
     this.clearCompleted = this._clearCompleted.bind( this );
+    this.componentDidMount = this.componentDidMount.bind( this );
+    this.countLeftTodos = this.countLeftTodos.bind( this );
   }
+
 
   _setEntries( entries ) {
     this.setState({
@@ -30,13 +34,53 @@ class ToDo extends React.Component{
     });
   }
 
+countLeftTodos (wasChecked) {
+  var counter = this.state.counter;
+  console.log('trying');
+  if(wasChecked) {
+    counter-=1;
+  }
+  else {
+    counter+=1;
+  }
+  this.setState({
+    counter:counter
+  })
+}
+  componentDidMount() {
+    var that = this;
+    var counter = 0;
+    var list = ds.record.getList( 'todos' );
+    list.whenReady(()=> {
+      var entries = list.getEntries();
+      entries.forEach(function(todo) {
+        var rec = ds.record.getRecord(todo);
+        rec.whenReady(()=>{
+          if(rec.get('isDone')==false) {
+            counter+=1;
+            that.setState({
+              counter:counter
+            })
+          }
+        })
+      })
+    })
+  }
+
+
   render() {
+    var counter = this.state.counter;
+    var countLeftTodos = this.countLeftTodos;
     var todos = this.state.todos;
     var list = this.list;
     var toShow = this.state.toShow;
     var todos = this.state.todos.map(function(recordName) {
       return (
-        <TodoItem recordName={recordName} list={list} key={recordName} toShow={toShow}/>
+        <TodoItem recordName={recordName}
+          list={list} key={recordName}
+          toShow={toShow}
+          countLeftTodos={countLeftTodos}
+          />
       )
     })
     return (
@@ -56,7 +100,7 @@ class ToDo extends React.Component{
           {todos}
         </div>
         <div className="footer">
-          <h4 className="itemsLeft"> {this.state.todos.length} items left</h4>
+          <h4 className="itemsLeft"> {counter} items left</h4>
           <button className="footerButton" onClick={this.showAll}>All</button>
           <button className="footerButton" onClick={this.showActive}>Active</button>
           <button className="footerButton" onClick={this.showCompleted}>Completed</button>
@@ -79,7 +123,9 @@ class ToDo extends React.Component{
       isDone: false
     });
     this.list.addEntry( id );
-    this.setState({ newTodo:'' });
+    this.setState({ newTodo:'',
+      counter:this.state.counter+1
+     });
   }
 
   _handleChange(e) {
@@ -186,9 +232,12 @@ class TodoItem extends React.Component{
   _removeTodo() {
     this.props.list.removeEntry( this.record.name );
     this.record.delete();
+    this.props.countLeftTodos(true);
+
   }
 
   _check (event) {
+    this.props.countLeftTodos(event.target.checked);
     if(event.target.checked==true) {
       this.record.set('isDone', true);
       this.setState({
@@ -215,7 +264,6 @@ class TodoItem extends React.Component{
   }
 
   handleChange(event) {
-    console.log(event.target.value)
     this.setState({editedText: event.target.value});
   }
 
