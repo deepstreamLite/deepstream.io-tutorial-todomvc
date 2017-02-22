@@ -23,7 +23,7 @@ class ToDo extends React.Component{
     this.showActive = this._showActive.bind( this );
     this.showCompleted = this._showCompleted.bind( this );
     this.clearCompleted = this._clearCompleted.bind( this );
-    this.componentDidMount = this.componentDidMount.bind( this );
+    this.initialCount = this.initialCount.bind( this );
     this.countLeftTodos = this.countLeftTodos.bind( this );
   }
 
@@ -34,42 +34,30 @@ class ToDo extends React.Component{
     });
   }
 
-countLeftTodos (wasChecked) {
-  var counter = this.state.counter;
-  console.log('trying');
-  if(wasChecked) {
-    counter-=1;
-  }
-  else {
-    counter+=1;
-  }
-  this.setState({
-    counter:counter
-  })
-}
-  componentDidMount() {
-    var that = this;
-    var counter = 0;
-    var list = ds.record.getList( 'todos' );
-    list.whenReady(()=> {
-      var entries = list.getEntries();
-      entries.forEach(function(todo) {
-        var rec = ds.record.getRecord(todo);
-        rec.whenReady(()=>{
-          if(rec.get('isDone')==false) {
-            counter+=1;
-            that.setState({
-              counter:counter
-            })
-          }
-        })
+  initialCount(left) {
+    if(!left) {
+      this.setState({
+        counter:this.state.counter+1
       })
+    }
+  }
+
+  countLeftTodos (wasChecked) {
+    var counter = this.state.counter;
+    if(wasChecked) {
+      counter-=1;
+    }
+    else {
+      counter+=1;
+    }
+    this.setState({
+      counter:counter
     })
   }
 
-
   render() {
     var counter = this.state.counter;
+    var initialCount = this.initialCount;
     var countLeftTodos = this.countLeftTodos;
     var todos = this.state.todos;
     var list = this.list;
@@ -80,6 +68,7 @@ countLeftTodos (wasChecked) {
           list={list} key={recordName}
           toShow={toShow}
           countLeftTodos={countLeftTodos}
+          initialCount={initialCount}
           />
       )
     })
@@ -123,9 +112,8 @@ countLeftTodos (wasChecked) {
       isDone: false
     });
     this.list.addEntry( id );
-    this.setState({ newTodo:'',
-      counter:this.state.counter+1
-     });
+    this.setState({ newTodo:''
+    });
   }
 
   _handleChange(e) {
@@ -172,6 +160,9 @@ class TodoItem extends React.Component{
   constructor(props) {
     super(props);
     this.record = ds.record.getRecord(this.props.recordName);
+    this.record.whenReady(()=>{
+      this.props.initialCount(this.record.get('isDone'))
+    })
     this.record.subscribe(this.setState.bind(this), true);
     this.removeTodo = this._removeTodo.bind( this );
     this.check = this._check.bind( this );
@@ -204,19 +195,19 @@ class TodoItem extends React.Component{
               type="checkbox"
               checked={isDone}
               onChange={check}/>
-              <label id={recordName}
-                className={isDone ? 'doneTodo' : 'todoText'}
-                onDoubleClick={startEdit}
-                >{title}</label>
-              <input
-                ref="editField"
-                className="editInput"
-                className={toEdit ? 'edit' : 'noEdit'}
-                value={editedText}
-                onBlur={handleSubmit}
-                onChange={handleChange}
-                onKeyDown={handleKeyDown}
-                />
+            <label id={recordName}
+              className={isDone ? 'doneTodo' : 'todoText'}
+              onDoubleClick={startEdit}
+              >{title}</label>
+            <input
+              ref="editField"
+              className="editInput"
+              className={toEdit ? 'edit' : 'noEdit'}
+              value={editedText}
+              onBlur={handleSubmit}
+              onChange={handleChange}
+              onKeyDown={handleKeyDown}
+              />
             <button className="destroy" onClick={removeTodo} />
           </li>
         )
@@ -232,7 +223,9 @@ class TodoItem extends React.Component{
   _removeTodo() {
     this.props.list.removeEntry( this.record.name );
     this.record.delete();
-    this.props.countLeftTodos(true);
+    if(this.state.isDone==false) {
+      this.props.countLeftTodos(true)
+    };
 
   }
 
