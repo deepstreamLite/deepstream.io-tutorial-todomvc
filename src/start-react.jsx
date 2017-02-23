@@ -3,8 +3,6 @@ ds.login({ username: 'ds-simple-input-' + ds.getUid() });
 
 var emitter = new EventEmitter();
 
-
-
 class ToDo extends React.Component{
   constructor(props) {
     super(props);
@@ -27,9 +25,7 @@ class ToDo extends React.Component{
     this.initialCount = this.initialCount.bind( this );
     this.countLeftTodos = this.countLeftTodos.bind( this );
     this.toggleAll = this.toggleAll.bind( this );
-
   }
-
 
   _setEntries( entries ) {
     this.setState({
@@ -46,26 +42,21 @@ class ToDo extends React.Component{
   }
 
   countLeftTodos (wasChecked) {
-    var counter = this.state.counter;
     if(wasChecked) {
-      counter-=1;
+      this.setState({
+        counter:this.state.counter-1
+      })
     }
     else {
-      counter+=1;
+      this.setState({
+        counter:this.state.counter+1
+      })
     }
-    this.setState({
-      counter:counter
-    })
   }
 
   render() {
-    var counter = this.state.counter;
-    var allChecked = this.state.allChecked;
-    var initialCount = this.initialCount;
-    var countLeftTodos = this.countLeftTodos;
-    var todos = this.state.todos;
-    var list = this.list;
-    var toShow = this.state.toShow;
+    var {todos, toShow, counter, allChecked} = this.state;
+    var {initialCount, countLeftTodos, list} = this;
     var downarrow;
     var todos = this.state.todos.map(function(recordName) {
       return (
@@ -86,7 +77,6 @@ class ToDo extends React.Component{
 							type="checkbox"
 							onChange={this.toggleAll}
               checked={allChecked}
-
 						/>
 					</section>
 				);
@@ -125,22 +115,17 @@ class ToDo extends React.Component{
 
   toggleAll(event) {
     if(event.target.checked==true) {
-      console.log('im in true')
       this.setState({
         allChecked:true
       })
 
     }
     if(event.target.checked==false) {
-      console.log('im in false')
-
       this.setState({
         allChecked:false
       })
     }
-    console.log(this.state.allChecked)
-  			// this.props.model.toggleAll(checked);
-  		}
+  }
 
   _handleKeyPress(e) {
     if(e.key === 'Enter' && this.state.newTodo.length > 0 ) {
@@ -183,9 +168,7 @@ class ToDo extends React.Component{
 
   _clearCompleted() {
     var list = this.list;
-
     if(this.state.allChecked==true) {
-      console.log('yes its true');
       list.setEntries([]);
       this.setState({
         counter:0,
@@ -207,7 +190,6 @@ class ToDo extends React.Component{
 
 
 
-
 class TodoItem extends React.Component{
   constructor(props) {
     super(props);
@@ -216,6 +198,7 @@ class TodoItem extends React.Component{
     this.record.whenReady(()=>{
       this.props.initialCount(this.record.get('isDone'))
     })
+
     this.record.subscribe(this.setState.bind(this), true);
     this.removeTodo = this._removeTodo.bind( this );
     this.check = this._check.bind( this );
@@ -297,7 +280,6 @@ class TodoItem extends React.Component{
         isDone:false
       })
     }
-    console.log(this.state.isDone)
   }
 
 
