@@ -75,7 +75,6 @@ class ToDo extends React.Component{
     return (
       <div>
         <header className="header">
-          <h1 id="headline">todos</h1>
           <input
             className="new-todo"
             placeholder="What needs to be done?"
@@ -90,11 +89,14 @@ class ToDo extends React.Component{
         </div>
         <div className="footer">
           <h4 className="itemsLeft"> {counter} items left</h4>
-          <button className="footerButton" onClick={this.showAll}>All</button>
-          <button className="footerButton" onClick={this.showActive}>Active</button>
-          <button className="footerButton" onClick={this.showCompleted}>Completed</button>
-          <button className="footerButton" onClick={this.clearCompleted}>Clear Completed</button>
-        </div>
+          <ul className="filters">
+        <li><input type="Submit" value="All" className="footerButton" onClick={this.showAll}/></li>
+        <li><input type="Submit" value="Active" className="footerButton" onClick={this.showActive}/></li>
+        <li><input type="Submit" value="Completed" className="footerButton" onClick={this.showCompleted}/></li>
+        <li><input type="Submit" value="Clear Completed" className={this.state.todos.length==this.state.counter ? "nothingToClear" : "footerButton"}
+            onClick={this.clearCompleted}/></li>
+        </ul>
+    </div>
       </div>
     )
   }
@@ -248,8 +250,6 @@ class TodoItem extends React.Component{
 
 
   startEdit() {
-    console.log('double click')
-    console.log(this.refs.editField)
     this.setState({
       toEdit: true,
       editedText: this.state.title
@@ -293,10 +293,13 @@ class TodoItem extends React.Component{
 
 
 React.render(
+<div>
+  <h1 id="headline">todos</h1>
   <div id="wrapper">
     <div>
       <ToDo />
     </div>
+  </div>
   </div>,
   document.body
 );

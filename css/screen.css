@@ -30,7 +30,7 @@ input:focus {outline:0;}
 #headline {
 	position: relative;
 	/*bottom: 50px;*/
-	font-size: 70px;
+	font-size: 100px;
 	font-weight: 100;
 	text-align: center;
 	color: rgba(175, 47, 47, 0.15);
@@ -313,20 +313,23 @@ li:hover .destroy {
 
 .itemsLeft {
 	position: relative;
-	bottom: 20px;
+	bottom: 15px;
 	color: #777;
 font-weight: 300;
 display: inline-block;
+}
 
-
+.nothingToClear {
+	display:none;
 }
 
 /*.footer:before {
 	content: '';
 	position: absolute;
 	right: 0;
-	bottom: 0;
-	left: 0;
+	top: 0;
+	width:550px;
+	left: 175px;
 	height: 50px;
 	overflow: hidden;
 	box-shadow: 0 1px 1px rgba(0, 0, 0, 0.2),
@@ -334,25 +337,25 @@ display: inline-block;
 	            0 9px 1px -3px rgba(0, 0, 0, 0.2),
 	            0 16px 0 -6px #f6f6f6,
 	            0 17px 2px -6px rgba(0, 0, 0, 0.2);
-}
+}*/
 
 
 
 .filters {
-	margin: 0;
+	bottom: 13px;
 	padding: 0;
 	list-style: none;
-	position: absolute;
 	right: 0;
-	left: 0;
-}
-
-.filters  {
+	left: 80px;
+	position:relative;
 	display: inline;
-
 }
 
-.filters {
+.filters li {
+	display: inline;
+}
+
+.filters li {
 	color: inherit;
 	margin: 3px;
 	padding: 3px 7px;
@@ -361,11 +364,29 @@ display: inline-block;
 	border-radius: 3px;
 }
 
-
-.filters :hover {
+.filters li,
+.filters li:hover {
 	border-color: rgba(175, 47, 47, 0.1);
 }
 
-.filters li a.selected {
+.filters li .selected {
 	border-color: rgba(175, 47, 47, 0.2);
+}
+
+.footerButton {
+	border:none;
+}
+
+/*.clear-completed,
+html .clear-completed:active {
+	float: right;
+	position: relative;
+	line-height: 20px;
+	text-decoration: none;
+	cursor: pointer;
+	position: relative;
+}
+
+.clear-completed:hover {
+	text-decoration: underline;
 }*/
