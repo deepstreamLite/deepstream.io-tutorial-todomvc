@@ -15,7 +15,8 @@ class ToDo extends React.Component{
       newTodo:'',
       toShow:'all',
       counter:0,
-      trial:'trial'
+      trial:'trial',
+      allChecked:false
     }
     this.handleKeyPress = this._handleKeyPress.bind( this );
     this.handleChange = this._handleChange.bind( this );
@@ -25,6 +26,8 @@ class ToDo extends React.Component{
     this.clearCompleted = this._clearCompleted.bind( this );
     this.initialCount = this.initialCount.bind( this );
     this.countLeftTodos = this.countLeftTodos.bind( this );
+    this.toggleAll = this.toggleAll.bind( this );
+
   }
 
 
@@ -57,11 +60,13 @@ class ToDo extends React.Component{
 
   render() {
     var counter = this.state.counter;
+    var allChecked = this.state.allChecked;
     var initialCount = this.initialCount;
     var countLeftTodos = this.countLeftTodos;
     var todos = this.state.todos;
     var list = this.list;
     var toShow = this.state.toShow;
+    var downarrow;
     var todos = this.state.todos.map(function(recordName) {
       return (
         <TodoItem recordName={recordName}
@@ -69,9 +74,24 @@ class ToDo extends React.Component{
           toShow={toShow}
           countLeftTodos={countLeftTodos}
           initialCount={initialCount}
+          allChecked={allChecked}
           />
       )
     })
+    if (todos.length) {
+				downarrow = (
+					<section className="main">
+						<input
+							className="toggle-all"
+							type="checkbox"
+							onChange={this.toggleAll}
+              checked={allChecked}
+
+						/>
+					</section>
+				);
+			}
+
     return (
       <div>
         <header className="header">
@@ -84,6 +104,7 @@ class ToDo extends React.Component{
             autoFocus={true}
             />
         </header>
+        {downarrow}
         <div className="todos">
           {todos}
         </div>
@@ -93,13 +114,33 @@ class ToDo extends React.Component{
         <li><input type="Submit" value="All" className="footerButton" onClick={this.showAll}/></li>
         <li><input type="Submit" value="Active" className="footerButton" onClick={this.showActive}/></li>
         <li><input type="Submit" value="Completed" className="footerButton" onClick={this.showCompleted}/></li>
-        <li><input type="Submit" value="Clear Completed" className={this.state.todos.length==this.state.counter ? "nothingToClear" : "footerButton"}
-            onClick={this.clearCompleted}/></li>
         </ul>
+        <input type="Submit" value="Clear Completed"
+          className={(this.state.todos.length!==this.state.counter || this.state.allChecked) ? "clear-completed":"nothingToClear" }
+            onClick={this.clearCompleted}/>
     </div>
       </div>
     )
   }
+
+  toggleAll(event) {
+    if(event.target.checked==true) {
+      console.log('im in true')
+      this.setState({
+        allChecked:true
+      })
+
+    }
+    if(event.target.checked==false) {
+      console.log('im in false')
+
+      this.setState({
+        allChecked:false
+      })
+    }
+    console.log(this.state.allChecked)
+  			// this.props.model.toggleAll(checked);
+  		}
 
   _handleKeyPress(e) {
     if(e.key === 'Enter' && this.state.newTodo.length > 0 ) {
@@ -142,6 +183,15 @@ class ToDo extends React.Component{
 
   _clearCompleted() {
     var list = this.list;
+
+    if(this.state.allChecked==true) {
+      console.log('yes its true');
+      list.setEntries([]);
+      this.setState({
+        counter:0,
+        allChecked:false
+      })
+    }
     var todos = this.state.todos;
     todos.forEach(function(recordName) {
       var rec = ds.record.getRecord(recordName);
@@ -161,6 +211,7 @@ class ToDo extends React.Component{
 class TodoItem extends React.Component{
   constructor(props) {
     super(props);
+    console.log(this.props.allChecked)
     this.record = ds.record.getRecord(this.props.recordName);
     this.record.whenReady(()=>{
       this.props.initialCount(this.record.get('isDone'))
@@ -184,7 +235,7 @@ class TodoItem extends React.Component{
 
   render () {
     var {isDone, title, handleEdit, toEdit, editedText} = this.state;
-    var {toShow, recordName} = this.props;
+    var {toShow, recordName, allChecked} = this.props;
     var {check, removeTodo, startEdit, handleSubmit, handleChange, handleKeyDown } = this;
 
     function whatToShow() {
@@ -195,7 +246,7 @@ class TodoItem extends React.Component{
             <input className="toggle"
               name="done"
               type="checkbox"
-              checked={isDone}
+              checked={allChecked ? true: isDone}
               onChange={check}/>
             <label id={recordName}
               className={isDone ? 'doneTodo' : 'todoText'}
@@ -246,6 +297,7 @@ class TodoItem extends React.Component{
         isDone:false
       })
     }
+    console.log(this.state.isDone)
   }
 
 

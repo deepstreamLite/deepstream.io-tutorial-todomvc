@@ -63,7 +63,7 @@ input:focus {outline:0;}
     line-height: 2em;
     border: 0;
     outline: none;
-    padding: 6px;
+    /*padding: 6px;*/
     /*border: 1px solid #999;*/
     box-shadow: inset 0 -1px 5px 0 rgba(0, 0, 0, 0.2);
     box-sizing: border-box;
@@ -303,7 +303,6 @@ li:hover .destroy {
     padding: 10px 15px;
     height: 20px;
     /*text-align: center;*/
-    border-top: 1px solid #e6e6e6;
 		display: inline-block;
 }
 
@@ -319,9 +318,6 @@ font-weight: 300;
 display: inline-block;
 }
 
-.nothingToClear {
-	display:none;
-}
 
 /*.footer:before {
 	content: '';
@@ -375,18 +371,92 @@ display: inline-block;
 
 .footerButton {
 	border:none;
+	cursor: pointer;
+	font-family: inherit;
+	font-weight: inherit;
+	color: inherit;
+	-webkit-appearance: none;
+	appearance: none;
+	-webkit-font-smoothing: antialiased;
+	-moz-font-smoothing: antialiased;
+	font-smoothing: antialiased;
+
 }
 
-/*.clear-completed,
+
+.clear-completed,
 html .clear-completed:active {
 	float: right;
+	left:170px;
 	position: relative;
 	line-height: 20px;
 	text-decoration: none;
 	cursor: pointer;
 	position: relative;
+	top: 5px;
+	padding: 0;
+	border: 0;
+	background: none;
+	font-size: 100%;
+	vertical-align: baseline;
+	font-family: inherit;
+	font-weight: inherit;
+	color: inherit;
+	-webkit-appearance: none;
+	appearance: none;
+	-webkit-font-smoothing: antialiased;
+	-moz-font-smoothing: antialiased;
+	font-smoothing: antialiased;
 }
 
 .clear-completed:hover {
 	text-decoration: underline;
+}
+
+
+/*.clear-completed {
+	float:right;
+	border:none;
+	cursor: pointer;
 }*/
+.nothingToClear {
+	display:none;
+	border:1px solid white;
+	height:0;
+	width:0;
+
+}
+
+.main {
+	position: relative;
+	z-index: 2;
+	border-top: 1px solid #e6e6e6;
+}
+
+label[for='toggle-all'] {
+	display: none;
+}
+
+.toggle-all {
+	position: absolute;
+	top: -55px;
+	left: -12px;
+	width: 60px;
+	height: 34px;
+	text-align: center;
+	border: none; /* Mobile Safari */
+}
+
+.toggle-all:before {
+	/*border: 1px solid black;*/
+	width:20px;
+	content: '⇩';
+	font-size: 22px;
+	color: #e6e6e6;
+	padding: 10px 27px 10px 27px;
+
+}
+
+.toggle-all:checked:before {
+	color: #737373;
+}
