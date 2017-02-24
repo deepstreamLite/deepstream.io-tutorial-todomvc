@@ -49,8 +49,6 @@ input:focus {outline:0;}
 
 ::-webkit-input-placeholder {
    color: #D0D0D0;
-	 /*text-align: center;*/
-	 /*padding-left: 30px;*/
 }
 
 .new-todo, .edit {
@@ -63,8 +61,6 @@ input:focus {outline:0;}
     line-height: 2em;
     border: 0;
     outline: none;
-    /*padding: 6px;*/
-    /*border: 1px solid #999;*/
     box-shadow: inset 0 -1px 5px 0 rgba(0, 0, 0, 0.2);
     box-sizing: border-box;
     -webkit-font-smoothing: antialiased;
@@ -179,8 +175,6 @@ li {
 	line-height: 0.5em;
 }
 
-
-
 .todoText {
 	white-space: pre-line;
 		word-break: break-all;
@@ -196,9 +190,6 @@ li {
 	top: 25px;
 }
 
-
-
-
 .doneTodo {
 	white-space: pre-line;
 		word-break: break-all;
@@ -213,7 +204,6 @@ li {
 	color: #d9d9d9;
 	text-decoration: line-through;
 	top: 25px;
-
 }
 
 .checkbox {
@@ -221,11 +211,6 @@ li {
 	margin-right: 15px;
 }
 
-/*.todoInput {
-	width: 100%;
-	height: 20px;
-	font-size: 18px;
-}*/
 
 .destroy {
 	margin: 0;
@@ -244,7 +229,6 @@ li {
 	font-smoothing: antialiased;
 	display: none;
 	position: absolute;
-	/*top: 10px;*/
 	right: 10px;
 	bottom: 22px;
 	width: 40px;
@@ -254,8 +238,6 @@ li {
 	color: #cc9a9a;
 	transition: color 0.2s ease-out;
 }
-
-
 
 .destroy:hover {
 	color: #af5b5e;
@@ -277,10 +259,7 @@ li:hover .destroy {
 	position: absolute;
 	top: 180px;
 	left: 320px;
-	/*width: 60px;
-	height: 34px;*/
-	/*text-align: center;*/
-	border: none; /* Mobile Safari */
+	border: none;
 }
 
 .toggle-all:before {
@@ -294,16 +273,12 @@ li:hover .destroy {
 	color: #737373;
 }
 
-
-
 .footer {
 	color: #777;
 	font-weight: 300;
-
-    padding: 10px 15px;
-    height: 20px;
-    /*text-align: center;*/
-		display: inline-block;
+  padding: 10px 15px;
+  height: 20px;
+	display: inline-block;
 }
 
 .footerButton {
@@ -317,24 +292,6 @@ li:hover .destroy {
 font-weight: 300;
 display: inline-block;
 }
-
-
-/*.footer:before {
-	content: '';
-	position: absolute;
-	right: 0;
-	top: 0;
-	width:550px;
-	left: 175px;
-	height: 50px;
-	overflow: hidden;
-	box-shadow: 0 1px 1px rgba(0, 0, 0, 0.2),
-	            0 8px 0 -3px #f6f6f6,
-	            0 9px 1px -3px rgba(0, 0, 0, 0.2),
-	            0 16px 0 -6px #f6f6f6,
-	            0 17px 2px -6px rgba(0, 0, 0, 0.2);
-}*/
-
 
 
 .filters {
@@ -380,9 +337,7 @@ display: inline-block;
 	-webkit-font-smoothing: antialiased;
 	-moz-font-smoothing: antialiased;
 	font-smoothing: antialiased;
-
 }
-
 
 .clear-completed,
 html .clear-completed:active {
@@ -414,17 +369,11 @@ html .clear-completed:active {
 }
 
 
-/*.clear-completed {
-	float:right;
-	border:none;
-	cursor: pointer;
-}*/
 .nothingToClear {
 	display:none;
 	border:1px solid white;
 	height:0;
 	width:0;
-
 }
 
 .main {
@@ -444,11 +393,10 @@ label[for='toggle-all'] {
 	width: 60px;
 	height: 34px;
 	text-align: center;
-	border: none; /* Mobile Safari */
+	border: none; 
 }
 
 .toggle-all:before {
-	/*border: 1px solid black;*/
 	width:20px;
 	content: '⇩';
 	font-size: 22px;
@@ -460,3 +408,20 @@ label[for='toggle-all'] {
 .toggle-all:checked:before {
 	color: #737373;
 }
+
+
+/*.footer:before {
+	content: '';
+	position: absolute;
+	right: 0;
+	top: 0;
+	width:550px;
+	left: 175px;
+	height: 50px;
+	overflow: hidden;
+	box-shadow: 0 1px 1px rgba(0, 0, 0, 0.2),
+	            0 8px 0 -3px #f6f6f6,
+	            0 9px 1px -3px rgba(0, 0, 0, 0.2),
+	            0 16px 0 -6px #f6f6f6,
+	            0 17px 2px -6px rgba(0, 0, 0, 0.2);
+}*/

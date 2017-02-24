@@ -1,7 +1,6 @@
 var ds = deepstream( 'localhost:6020' )
 ds.login({ username: 'ds-simple-input-' + ds.getUid() });
 
-var emitter = new EventEmitter();
 
 class ToDo extends React.Component{
   constructor(props) {
@@ -193,13 +192,13 @@ class ToDo extends React.Component{
 class TodoItem extends React.Component{
   constructor(props) {
     super(props);
-    console.log(this.props.allChecked)
     this.record = ds.record.getRecord(this.props.recordName);
+    this.record.subscribe(this.setState.bind(this), true);
+
     this.record.whenReady(()=>{
       this.props.initialCount(this.record.get('isDone'))
     })
 
-    this.record.subscribe(this.setState.bind(this), true);
     this.removeTodo = this._removeTodo.bind( this );
     this.check = this._check.bind( this );
     this.startEdit = this.startEdit.bind( this );
