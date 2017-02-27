@@ -15,6 +15,7 @@ class ToDo extends React.Component{
       trial:'trial',
       allChecked:false
     }
+
     this.handleKeyPress = this._handleKeyPress.bind( this );
     this.handleChange = this._handleChange.bind( this );
     this.showAll = this._showAll.bind( this );
@@ -54,7 +55,7 @@ class ToDo extends React.Component{
   }
 
   render() {
-    var {todos, toShow, counter, allChecked} = this.state;
+    var {todos, toShow, counter, allChecked, clearCompleted} = this.state;
     var {initialCount, countLeftTodos, list} = this;
     var downarrow;
     var todos = this.state.todos.map(function(recordName) {
@@ -69,17 +70,17 @@ class ToDo extends React.Component{
       )
     })
     if (todos.length) {
-				downarrow = (
-					<section className="main">
-						<input
-							className="toggle-all"
-							type="checkbox"
-							onChange={this.toggleAll}
-              checked={allChecked}
-						/>
-					</section>
-				);
-			}
+      downarrow = (
+        <section className="main">
+          <input
+            className="toggle-all"
+            type="checkbox"
+            onChange={this.toggleAll}
+            checked={allChecked}
+            />
+        </section>
+      );
+    }
 
     return (
       <div>
@@ -100,14 +101,14 @@ class ToDo extends React.Component{
         <div className="footer">
           <h4 className="itemsLeft"> {counter} items left</h4>
           <ul className="filters">
-        <li><input type="Submit" value="All" className="footerButton" onClick={this.showAll}/></li>
-        <li><input type="Submit" value="Active" className="footerButton" onClick={this.showActive}/></li>
-        <li><input type="Submit" value="Completed" className="footerButton" onClick={this.showCompleted}/></li>
-        </ul>
-        <input type="Submit" value="Clear Completed"
-          className={(this.state.todos.length!==this.state.counter || this.state.allChecked) ? "clear-completed":"nothingToClear" }
+            <li><input type="Submit" value="All" className="footerButton" onClick={this.showAll}/></li>
+            <li><input type="Submit" value="Active" className="footerButton" onClick={this.showActive}/></li>
+            <li><input type="Submit" value="Completed" className="footerButton" onClick={this.showCompleted}/></li>
+          </ul>
+          <input type="Submit" value="Clear Completed"
+            className={(this.state.todos.length!==this.state.counter || this.state.allChecked) ? "clear-completed":"nothingToClear" }
             onClick={this.clearCompleted}/>
-    </div>
+        </div>
       </div>
     )
   }
@@ -167,23 +168,31 @@ class ToDo extends React.Component{
 
   _clearCompleted() {
     var list = this.list;
+    var todos = this.state.todos;
     if(this.state.allChecked==true) {
-      list.setEntries([]);
       this.setState({
         counter:0,
         allChecked:false
       })
-    }
-    var todos = this.state.todos;
-    todos.forEach(function(recordName) {
-      var rec = ds.record.getRecord(recordName);
-      rec.whenReady(()=>{
-        if(rec.get('isDone')==true) {
+      todos.forEach(function(recordName) {
+        var rec = ds.record.getRecord(recordName);
+        rec.whenReady(()=>{
           list.removeEntry(recordName);
           rec.delete();
-        }
+        })
       })
-    })
+    }
+    else {
+      todos.forEach(function(recordName) {
+        var rec = ds.record.getRecord(recordName);
+        rec.whenReady(()=>{
+          if(rec.get('isDone')==true) {
+            list.removeEntry(recordName);
+            rec.delete();
+          }
+        })
+      })
+    }
   }
 };
 
@@ -249,19 +258,20 @@ class TodoItem extends React.Component{
       }
     }
 
+
     return (
       <div>
         {whatToShow()}
       </div>
     )
   }
+
   _removeTodo() {
     this.props.list.removeEntry( this.record.name );
     this.record.delete();
     if(this.state.isDone==false) {
       this.props.countLeftTodos(true)
     };
-
   }
 
   _check (event) {
@@ -317,7 +327,8 @@ class TodoItem extends React.Component{
       this.setState({
         toEdit: false
       });
-    } else if (event.keyCode === ENTER_KEY) {
+    }
+    else if (event.keyCode === ENTER_KEY) {
       this.handleSubmit();
     }
   }
@@ -326,13 +337,13 @@ class TodoItem extends React.Component{
 
 
 React.render(
-<div>
-  <h1 id="headline">todos</h1>
-  <div id="wrapper">
-    <div>
-      <ToDo />
+  <div>
+    <h1 id="headline">todos</h1>
+    <div id="wrapper">
+      <div>
+        <ToDo />
+      </div>
     </div>
-  </div>
   </div>,
   document.body
 );
